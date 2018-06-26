@@ -11,16 +11,22 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Header from './Header';
+import { connect } from 'react-redux';
+import { setNewPost, setEditPost } from '../actions/index';
 import * as ReadableAPI from '../utils/ReadableAPI';
 import { uuid } from '../utils/SimpleUUID';
 
 class Post extends Component {
 
   state = {
+    id: '',
+    timestamp: '',
     author: '',
     title: '',
     body: '',
-    category: '', 
+    category: '',
+    voteScore: '',
+    deleted: '',
     categories: [],
     isNew: true,
     errors: {}
@@ -32,11 +38,15 @@ class Post extends Component {
       if(params.id){      
         ReadableAPI.getPostById(params.id)
           .then(post => {
-            this.setState({ 
+            this.setState({
+              id: post.id,
+              timestamp: post.timestamp,
               author: post.author,
               title: post.title,
               body: post.body,
               category: post.category,
+              voteScore: post.voteScore,
+              deleted: post.deleted,
               isNew: false
              });
           });
@@ -71,15 +81,44 @@ class Post extends Component {
     return errors;
   }
 
+  getNewPost = () => {
+    return {
+      id: uuid(),
+      timestamp: Date.now(),
+      title: this.state.title,
+      body: this.state.body,
+      author: this.state.author,
+      category: this.state.category,
+      voteScore: 1,
+      deleted: false
+    };
+  }
+  
+  getEditPost = () => {
+    return {
+      id: this.state.id,
+      timestamp: this.state.timestamp,
+      title: this.state.title,
+      body: this.state.body,
+      author: this.state.author,
+      category: this.state.category,
+      voteScore: this.state.voteScore,
+      deleted: this.state.deleted
+    }
+  }
+
   handleSubmit = event => {
     const errors = this.validate();
     this.setState({errors});
     if ( Object.keys(errors).length === 0) {
       if( this.state.isNew ) {
-        ReadableAPI.addPost(uuid(),Date.now(),this.state);
+        const newPost = this.getNewPost();
+        ReadableAPI.addPost(newPost)
+          .then(() => this.props.dispatch(setNewPost(newPost))); 
       } else {
-        const { match: { params } } = this.props;
-        ReadableAPI.editPost(params.id,this.state.title,this.state.body);
+        const editPost = this.getEditPost();
+        ReadableAPI.editPost(this.state.id,this.state.title,this.state.body)
+          .then(() => this.props.dispatch(setEditPost(editPost)));
       }
       this.props.history.goBack();
     }
@@ -169,4 +208,4 @@ class Post extends Component {
   }
 }
 
-export default Post;
+export default connect()(Post);

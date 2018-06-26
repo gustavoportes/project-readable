@@ -24,7 +24,7 @@ export const updateVotingPost = (id, vote) =>
     body: JSON.stringify({ option: vote })
   }).then(res => res.json());
 
-export const addPost = (id, timestamp, {title, body, author, category}) =>
+export const addPost = ({id, timestamp, title, body, author, category}) =>
   fetch(`${api}/posts`, {
     method: "POST",
     headers: { 'Authorization': 'whatever-you-want', 'content-type': 'application/json' },

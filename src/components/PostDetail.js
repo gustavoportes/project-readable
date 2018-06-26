@@ -22,8 +22,9 @@ class PostDetail extends Component {
     if( params ) {
       if(params.post_id) {
         ReadableAPI.getPostById(params.post_id)
-          .then ( post => {
-              if ( Object.keys(post).length > 0) {
+          .then (
+            post => {
+              if ( Object.keys(post).length > 0 && post.id) {
                 this.props.dispatch(setPost(post));
                 ReadableAPI.getCommentsByPostId(params.post_id)
                 .then(
@@ -32,11 +33,17 @@ class PostDetail extends Component {
                     this.props.dispatch(loadComments(comments));
                   });
               } else {
-                this.setState({ isDeleted: true })
+                this.setState({ isDeleted: true });
               }
             }
           )
       }
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if( Object.keys(this.props.posts).length !== Object.keys(prevProps.posts).length ) {
+      this.props.history.goBack();
     }
   }
 

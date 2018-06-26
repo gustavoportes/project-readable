@@ -5,9 +5,14 @@ import * as ReadableAPI from '../utils/ReadableAPI';
 import Header from './Header';
 import Categories from './Categories';
 import PostsControl from './PostsControl';
+import NotFound from './NotFound';
 import { loadCategories, loadPosts } from '../actions/index';
 
 class ViewCategory extends Component {
+
+  state = {
+    notCategory: false
+  }
 
   componentDidMount() {
     const { match: { params } } = this.props;
@@ -15,7 +20,13 @@ class ViewCategory extends Component {
       if( params.category ) {
         ReadableAPI
           .getCategories()
-          .then(categories => this.props.dispatch(loadCategories(categories)));
+          .then(categories => {
+            if(this.checkCategory(categories,params.category)) {
+              this.props.dispatch(loadCategories(categories))
+            } else {
+              this.setState({ notCategory: true });
+            }
+          });
         ReadableAPI
           .getPostsByCategory( params.category )
           .then(posts => this.props.dispatch(loadPosts(posts)));
@@ -36,19 +47,34 @@ class ViewCategory extends Component {
     }
   }
 
+  checkCategory = (categories, nameCategory) => {
+    const check = categories.filter( category => category.name === nameCategory );
+    return check.length > 0 ? true : false;
+  }
+
+
   render() {
     return (
       <div>
-        <Grid container spacing={24}>
-          <Header />
-          <Grid item xs={12}>
-            <Categories />
+      { !this.state.notCategory ? (
+      <Grid container spacing={24}>
+        <Header />
+        <Grid item xs={12}>
+          <Categories />
+        </Grid>
+        <Grid item xs={12}>
+          <PostsControl />
+        </Grid>
+      </Grid>
+      ) :
+        <div>
+          <Grid container spacing={24}>
+            <Header />
+            <NotFound /> 
           </Grid>
-          <Grid item xs={12}>
-            <PostsControl />
-          </Grid>
-        </Grid>      
-      </div>
+        </div>
+      }
+      </div>       
     );
   }
 }

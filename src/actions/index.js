@@ -9,6 +9,8 @@ export const DELETE_POST = 'DELETE_POST';
 export const LOAD_COMMENTS = 'LOAD_COMMENTS';
 export const UPDATE_VOTE_COMMENT = 'UPDATE_VOTE_COMMENT';
 export const SET_POST = 'SET_POST';
+export const SET_NEW_POST = 'SET_NEW_POST';
+export const SET_EDIT_POST = 'SET_EDIT_POST';
 
 /*
  * action creators
@@ -50,5 +52,15 @@ export const updateVoteComment = (comment) => ({
 
 export const setPost = (post) => ({
   type: SET_POST,
+  post
+});
+
+export const setNewPost = (post) => ({
+  type: SET_NEW_POST,
+  post
+});
+
+export const setEditPost = (post) => ({
+  type: SET_EDIT_POST,
   post
 });

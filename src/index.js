@@ -10,6 +10,7 @@ import App from './components/App';
 import PostDetail from './components/PostDetail';
 import Post from './components/Post';
 import ViewCategory from './components/ViewCategory';
+import NotFound from './components/NotFound';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(
@@ -24,10 +25,11 @@ ReactDOM.render(
     <BrowserRouter>
       <Switch>
         <Route path="/" exact component={App} />
-        <Route path='/newpost' component={Post} />
+        <Route path='/newpost' exact component={Post} />
         <Route path='/edit/:id' component={Post} />
         <Route path='/:category' exact component={ViewCategory} />
         <Route path='/:category/:post_id' component={PostDetail} />
+        <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
   </Provider>

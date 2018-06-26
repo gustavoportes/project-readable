@@ -6,7 +6,9 @@ import {
   UPDATE_VOTE_POST,
   LOAD_COMMENTS,
   UPDATE_VOTE_COMMENT,
-  SET_POST
+  SET_POST,
+  SET_NEW_POST,
+  SET_EDIT_POST
 } from '../actions'
 
 const categoriesReducer = (state = { categories:[] }, action) => {
@@ -28,7 +30,7 @@ const postReducer = (state = { posts:[], orderBy: 'voteScore', post:{}}, action)
     case UPDATE_VOTE_POST:
       const postUpdate = action.post;
       const postsUpdate = state.posts.map(post => {
-        if(post.id === postUpdate.id){
+        if(post.id === postUpdate.id) {
           return postUpdate;
         }
         return post;
@@ -37,6 +39,18 @@ const postReducer = (state = { posts:[], orderBy: 'voteScore', post:{}}, action)
     case SET_POST:
       const setPost = action.post;
       return { ...state, post: setPost };
+    case SET_NEW_POST:
+      const newPost = action.post;
+      return { ...state, posts: [...state.posts, newPost], post: newPost };
+    case SET_EDIT_POST:
+      const editPost = action.post;
+      const postsEdit = state.posts.map( post => {
+          if(post.id === editPost.id) {
+            return editPost;
+          }
+          return post;
+      });
+      return {...state, posts: postsEdit, post: editPost };
     default:
       return state;
   }

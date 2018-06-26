@@ -37,8 +37,8 @@ function PostItem(props) {
       .then(() => {
         ReadableAPI
           .getPosts()
-          .then(posts => props.loadPosts(posts));
-      });
+          .then(posts => props.loadPosts(posts))
+      });      
   }
 
   const post = props;
